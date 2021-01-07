@@ -1,4 +1,4 @@
-# Hướng dẫn cài đặt bài tập lớn
+# Hướng dẫn cài đặt bài tập lớn Project III
 
 ### Vào terminal folder fashion-store-backend để bật server backend, chạy lệnh sau đây
 
@@ -20,7 +20,7 @@
 
 ---
 
-### Vào terminal folder fashion-store-frontend-admin-v2, chạy lệnh sau đây
+### Vào terminal folder fashion-store-frontend-admin, chạy lệnh sau đây
 
 > npm i
 
