@@ -1,9 +1,8 @@
-
 const mongoose = require('mongoose');
 const productSchema = new mongoose.Schema({
     productID: {
         type: String,
-        required: true
+        required: true,
     },
     name: {
         type: String,
@@ -19,23 +18,22 @@ const productSchema = new mongoose.Schema({
     },
     status: {
         type: Boolean,
-        required: true
+        required: true,
     },
     price: {
         type: Number,
-        required: true
+        required: true,
     },
     photo: {
         type: String,
-        required: false
+        required: false,
     },
     type: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Type'
+        ref: 'Type',
     },
     book: [
         {
-            
             time: {
                 type: Date,
                 required: true,
@@ -44,9 +42,9 @@ const productSchema = new mongoose.Schema({
             amount: {
                 type: Number,
                 default: 0,
-              },
-        }
-    ] 
+            },
+        },
+    ],
 });
 productSchema.set('timestamps', true);
 module.exports = mongoose.model('Product', productSchema);
