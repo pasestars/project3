@@ -38,6 +38,7 @@ function ProductManager(props) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [action, setAction] = useState("Sửa thông tin");
   const [editId, setEditId] = useState("");
+  const [countCode, setCountCode] = useState(1);
 
   const [dataOption, setDataOption] = useState([]);
   const [loadingPhoto, setLoadingPhoto] = useState(false);
@@ -347,6 +348,21 @@ function ProductManager(props) {
     setPagination(pagination);
   }
 
+  function nonAccentVietnamese(str) {
+    str = str.toLowerCase();
+    str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+    str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+    str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+    str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+    str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+    str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+    str = str.replace(/đ/g, "d");
+    // Some system encode vietnamese combining accent as individual utf-8 characters
+    str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, ""); // Huyền sắc hỏi ngã nặng
+    str = str.replace(/\u02C6|\u0306|\u031B/g, ""); // Â, Ê, Ă, Ơ, Ư
+    return str.toUpperCase();
+  }
+
   return (
     <>
       <div>
@@ -355,6 +371,7 @@ function ProductManager(props) {
           onClick={() => {
             form.resetFields();
             showModal("Thêm sản phẩm");
+            setCountCode((prev) => prev + 1);
           }}
           style={{ marginBottom: "16px" }}
         >
@@ -377,10 +394,35 @@ function ProductManager(props) {
             <Form.Item name={"name"} label="Tên" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
+            <Form.Item name={"type"} label="Loại" rules={[{ required: true }]}>
+              <Select
+                placeholder="Chọn loại sản phẩm"
+                defaultValue={data.type}
+                allowClear
+                onChange={(value) => {
+                  console.log(value);
+                  let name = dataOption.filter((o) => o._id == value);
+                  console.log(name[0]);
+                  name = nonAccentVietnamese(name[0].name);
+                  form.setFieldsValue({
+                    productID:
+                      name
+                        .split(" ")
+                        .map((item) => item[0])
+                        .join("") + countCode,
+                  });
+                }}
+              >
+                {dataOption.map((item, index) => {
+                  return <Option value={item._id}>{item.name}</Option>;
+                })}
+              </Select>
+            </Form.Item>
             <Form.Item
               name={"productID"}
               label="Mã sản phẩm"
               rules={[{ required: true }]}
+              // value={"ATE" + countCode}
             >
               <Input />
             </Form.Item>
@@ -390,17 +432,7 @@ function ProductManager(props) {
             <Form.Item name={"price"} label="Giá">
               <Input type="number" min="0" />
             </Form.Item>
-            <Form.Item name={"type"} label="Loại" rules={[{ required: true }]}>
-              <Select
-                placeholder="Chọn loại sản phẩm"
-                defaultValue={data.type}
-                allowClear
-              >
-                {dataOption.map((item, index) => {
-                  return <Option value={item._id}>{item.name}</Option>;
-                })}
-              </Select>
-            </Form.Item>
+
             <Form.Item name={"status"} label="Trạng thái">
               <Switch
                 defaultChecked={data.status !== null ? data.status : true}
